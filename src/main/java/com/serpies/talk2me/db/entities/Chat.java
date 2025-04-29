@@ -1,64 +1,54 @@
-package com.serpies.talk2me.db.models;
+package com.serpies.talk2me.db.entities;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.Objects;
 
-/**
- *
- * @author Ruben
- */
+import jakarta.persistence.*;
+
 @Entity
-@Table(name = "Chats")
-@NamedQueries({
-    @NamedQuery(name = "Chat.findAll", query = "SELECT c FROM Chat c"),
-    @NamedQuery(name = "Chat.findById", query = "SELECT c FROM Chat c WHERE c.id = :id"),
-    @NamedQuery(name = "Chat.findByName", query = "SELECT c FROM Chat c WHERE c.name = :name"),
-    @NamedQuery(name = "Chat.findByDescription", query = "SELECT c FROM Chat c WHERE c.description = :description"),
-    @NamedQuery(name = "Chat.findByIsPrivate", query = "SELECT c FROM Chat c WHERE c.isPrivate = :isPrivate"),
-    @NamedQuery(name = "Chat.findByCreatedAt", query = "SELECT c FROM Chat c WHERE c.createdAt = :createdAt")})
+@Table(name = "chats")
 public class Chat implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    private Integer id;
+    private Long id;
+
     @Basic(optional = false)
     private String name;
+
     @Basic(optional = false)
     private String description;
+
     @Basic(optional = false)
+    @Column(name = "is_private")
     private boolean isPrivate;
+
     @Basic(optional = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
     private Date createdAt;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "chatId", fetch = FetchType.LAZY)
     private List<ChatMessage> chatMessageList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "chatId", fetch = FetchType.LAZY)
     private List<ChatUser> chatUserList;
 
     public Chat() {
     }
 
-    public Chat(Integer id) {
+    public Chat(Long id) {
         this.id = id;
     }
 
-    public Chat(Integer id, String name, String description, boolean isPrivate, Date createdAt) {
+    public Chat(Long id, String name, String description, boolean isPrivate, Date createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -66,11 +56,11 @@ public class Chat implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -90,12 +80,12 @@ public class Chat implements Serializable {
         this.description = description;
     }
 
-    public boolean getIsPrivate() {
+    public boolean isPrivate() {
         return isPrivate;
     }
 
-    public void setIsPrivate(boolean isPrivate) {
-        this.isPrivate = isPrivate;
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 
     public Date getCreatedAt() {
@@ -106,39 +96,31 @@ public class Chat implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public List<ChatMessage> getChatmessagesList() {
+    public List<ChatMessage> getChatMessageList() {
         return chatMessageList;
     }
 
-    public void setChatmessagesList(List<ChatMessage> chatMessageList) {
+    public void setChatMessageList(List<ChatMessage> chatMessageList) {
         this.chatMessageList = chatMessageList;
     }
 
-    public List<ChatUser> getChatusersList() {
+    public List<ChatUser> getChatUserList() {
         return chatUserList;
     }
 
-    public void setChatusersList(List<ChatUser> chatUserList) {
+    public void setChatUserList(List<ChatUser> chatUserList) {
         this.chatUserList = chatUserList;
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    public boolean equals(Object o) {
+        if (!(o instanceof Chat chat)) return false;
+        return Objects.equals(id, chat.id);
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Chat)) {
-            return false;
-        }
-        Chat other = (Chat) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override
@@ -153,4 +135,10 @@ public class Chat implements Serializable {
                 ", chatUserList=" + chatUserList +
                 '}';
     }
+
+    @PrePersist // Establece un valor por defecto antes de persistir
+    public void prePersist() {
+        if (this.createdAt == null) this.createdAt = new Date();
+    }
+
 }

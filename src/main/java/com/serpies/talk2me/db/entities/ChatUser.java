@@ -1,68 +1,58 @@
-package com.serpies.talk2me.db.models;
+package com.serpies.talk2me.db.entities;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.Objects;
 
-/**
- *
- * @author Ruben
- */
+import jakarta.persistence.*;
+
 @Entity
-@Table(name = "ChatUsers")
-@NamedQueries({
-    @NamedQuery(name = "ChatUser.findAll", query = "SELECT c FROM ChatUser c"),
-    @NamedQuery(name = "ChatUser.findById", query = "SELECT c FROM ChatUser c WHERE c.id = :id"),
-    @NamedQuery(name = "ChatUser.findByJoinedAt", query = "SELECT c FROM ChatUser c WHERE c.joinedAt = :joinedAt")})
+@Table(name = "chat_users")
 public class ChatUser implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    private Integer id;
+    private Long id;
+
     @Basic(optional = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "joined_at")
     private Date joinedAt;
-    @JoinColumn(name = "chatId", referencedColumnName = "id")
+
+    @JoinColumn(name = "chat_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Chat chatId;
-    @JoinColumn(name = "idLastMessageSent", referencedColumnName = "id")
+
+    @JoinColumn(name = "id_last_message_sent", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Message idLastMessageSent;
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User userId;
 
     public ChatUser() {
     }
 
-    public ChatUser(Integer id) {
+    public ChatUser(Long id) {
         this.id = id;
     }
 
-    public ChatUser(Integer id, Date joinedAt) {
+    public ChatUser(Long id, Date joinedAt) {
         this.id = id;
         this.joinedAt = joinedAt;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -99,22 +89,14 @@ public class ChatUser implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    public boolean equals(Object o) {
+        if (!(o instanceof ChatUser chatUser)) return false;
+        return Objects.equals(id, chatUser.id);
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof ChatUser)) {
-            return false;
-        }
-        ChatUser other = (ChatUser) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override
@@ -127,4 +109,10 @@ public class ChatUser implements Serializable {
                 ", userId=" + userId +
                 '}';
     }
+
+    @PrePersist // Establece un valor por defecto antes de persistir
+    public void prePersist() {
+        if (this.joinedAt == null) this.joinedAt = new Date();
+    }
+
 }
