@@ -33,6 +33,11 @@ public class AuthToken implements Serializable {
 
     @Basic(optional = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_attempt")
+    private Date lastAttempt;
+
+    @Basic(optional = false)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
     private Date createdAt;
 
@@ -43,16 +48,14 @@ public class AuthToken implements Serializable {
     public AuthToken() {
     }
 
-    public AuthToken(Long userId) {
-        this.userId = userId;
-    }
-
-    public AuthToken(Long userId, String token, short unsuccessfulAttempts, Date expiresAt, Date createdAt) {
+    public AuthToken(Long userId, String token, Short unsuccessfulAttempts, Date expiresAt, Date lastAttempt, Date createdAt, User user) {
         this.userId = userId;
         this.token = token;
         this.unsuccessfulAttempts = unsuccessfulAttempts;
         this.expiresAt = expiresAt;
+        this.lastAttempt = lastAttempt;
         this.createdAt = createdAt;
+        this.user = user;
     }
 
     public Long getUserId() {
@@ -85,6 +88,14 @@ public class AuthToken implements Serializable {
 
     public void setExpiresAt(Date expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public Date getLastAttempt() {
+        return lastAttempt;
+    }
+
+    public void setLastAttempt(Date lastAttempt) {
+        this.lastAttempt = lastAttempt;
     }
 
     public Date getCreatedAt() {
@@ -121,6 +132,7 @@ public class AuthToken implements Serializable {
                 ", token='" + token + '\'' +
                 ", unsuccessfulAttempts=" + unsuccessfulAttempts +
                 ", expiresAt=" + expiresAt +
+                ", lastAttempt=" + lastAttempt +
                 ", createdAt=" + createdAt +
                 ", user=" + user +
                 '}';
@@ -130,6 +142,7 @@ public class AuthToken implements Serializable {
     public void prePersist() {
         if (this.createdAt == null) this.createdAt = new Date();
         if (this.unsuccessfulAttempts == null) this.unsuccessfulAttempts = 0;
+        if (this.lastAttempt == null) this.lastAttempt = new Date();
     }
 
 }

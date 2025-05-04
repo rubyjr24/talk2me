@@ -50,8 +50,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(authTypeWithSpace.length());
         String email = this.jwtUtil.getEmail(token);
 
-        this.jwtUtil.isTokenValid(token);
-
         if (email == null || !this.jwtUtil.isTokenValid(token)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: Invalid Token");
             return;

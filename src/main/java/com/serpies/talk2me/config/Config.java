@@ -9,11 +9,17 @@ public class Config {
     @Value("${auth.type}")
     private String authType;
 
-    @Value("${token.expiration_time}")
-    private Long tokenExpirationTime;
+    @Value("${auth.time_out}")
+    private Long tokenTimeOut;
+
+    @Value("${auth.attempts_before_time_out}")
+    private Integer tokenAttemptsBeforeTimeOut;
 
     @Value("${token.secret_key}")
     private String tokenSecretKey;
+
+    @Value("${token.expiration_time}")
+    private Long tokenExpirationTime;
 
     public String getAuthType() {
         return authType;
@@ -25,5 +31,13 @@ public class Config {
 
     public String getTokenSecretKey() {
         return tokenSecretKey;
+    }
+
+    public Long getTokenTimeOut() {
+        return tokenTimeOut;
+    }
+
+    public Integer getTokenAttemptsBeforeTimeOut() {
+        return tokenAttemptsBeforeTimeOut;
     }
 }

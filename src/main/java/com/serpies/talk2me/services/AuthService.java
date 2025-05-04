@@ -10,14 +10,18 @@ import com.serpies.talk2me.db.enums.Gender;
 import com.serpies.talk2me.models.LoginRequestDto;
 import com.serpies.talk2me.models.SignUpRequestDto;
 import com.serpies.talk2me.utilities.Assert;
+import com.serpies.talk2me.utilities.auth.AuthUtil;
 import com.serpies.talk2me.utilities.exceptions.EmailAlreadyExistsException;
 import com.serpies.talk2me.utilities.exceptions.IncorrectPasswordOfUserException;
+import com.serpies.talk2me.utilities.exceptions.TimeOutLoginException;
 import com.serpies.talk2me.utilities.exceptions.UserNotFoundException;
 import com.serpies.talk2me.utilities.security.JwtUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
@@ -36,6 +40,9 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AuthUtil authUtil;
+
     public AuthTokenDto login(LoginRequestDto loginRequestDto){
 
         String email = loginRequestDto.getEmail();
@@ -51,32 +58,47 @@ public class AuthService {
         User user = optionalUser.get();
         String passwordUserDb = user.getPassword();
 
-        Assert.ifCondition(!password.equals(passwordUserDb), new IncorrectPasswordOfUserException("Passwords are not equals"));
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + config.getTokenExpirationTime() * 1000);
 
         Optional<AuthToken> optionalAuthToken = this.authTokenDao.findById(user.getId());
 
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + config.getTokenExpirationTime());
+        AuthToken authToken = optionalAuthToken.orElseGet(() -> {
+            AuthToken newAuthToken = new AuthToken();
+            newAuthToken.setUserId(user.getId());
+            newAuthToken.setCreatedAt(now);
+            newAuthToken.setExpiresAt(expiration);
+            newAuthToken.setToken(this.jwtUtil.generateToken(user.getId(), user.getEmail(), expiration));
 
-        if (optionalAuthToken.isPresent()){
+            return this.authTokenDao.save(newAuthToken);
+        });
 
-            AuthToken authTokenDb = optionalAuthToken.get();
-            authTokenDb.setCreatedAt(new Date());
-            authTokenDb.setExpiresAt(expiration);
-            authTokenDb.setToken(this.jwtUtil.generateToken(user.getId(), user.getEmail(), expiration));
+        long secondsTimeOut = (authToken.getUnsuccessfulAttempts() / config.getTokenAttemptsBeforeTimeOut()) * config.getTokenTimeOut();
+        Instant timeOut = authToken.getLastAttempt().toInstant().plusSeconds(secondsTimeOut);
 
-            authTokenDb = this.authTokenDao.save(authTokenDb);
-            return new AuthTokenDto(authTokenDb.getToken(), authTokenDb.getExpiresAt());
+        Assert.ifCondition(authUtil.hasTimeOut(authToken), new TimeOutLoginException("Many unsuccessful attempts have been made", Date.from(timeOut)));
+
+        if (!password.equals(passwordUserDb)){
+
+            authToken.setUnsuccessfulAttempts( (short) (authToken.getUnsuccessfulAttempts().intValue() + 1));
+            authToken.setLastAttempt(now);
+
+            this.authTokenDao.save(authToken);
+
+            throw new IncorrectPasswordOfUserException("Passwords are not equals");
 
         }
 
-        AuthToken authToken = new AuthToken();
-        authToken.setUserId(user.getId());
-        authToken.setCreatedAt(now);
-        authToken.setExpiresAt(expiration);
-        authToken.setToken(this.jwtUtil.generateToken(user.getId(), user.getEmail(), expiration));
+        if (authToken.getExpiresAt().before(now)){
 
-        authToken = this.authTokenDao.save(authToken);
+            authToken.setCreatedAt(now);
+            authToken.setExpiresAt(expiration);
+            authToken.setLastAttempt(now);
+            authToken.setToken(this.jwtUtil.generateToken(user.getId(), user.getEmail(), expiration));
+
+            authToken = this.authTokenDao.save(authToken);
+
+        }
 
         return new AuthTokenDto(authToken.getToken(), authToken.getExpiresAt());
 
@@ -110,7 +132,7 @@ public class AuthService {
         user = this.userDao.save(user);
 
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + config.getTokenExpirationTime());
+        Date expiration = new Date(now.getTime() + config.getTokenExpirationTime() * 1000);
 
         AuthToken authToken = new AuthToken();
         authToken.setUserId(user.getId());

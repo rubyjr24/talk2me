@@ -3,6 +3,7 @@ package com.serpies.talk2me.utilities.security;
 import com.serpies.talk2me.models.ErrorResponseDto;
 import com.serpies.talk2me.utilities.exceptions.EmailAlreadyExistsException;
 import com.serpies.talk2me.utilities.exceptions.IncorrectPasswordOfUserException;
+import com.serpies.talk2me.utilities.exceptions.TimeOutLoginException;
 import com.serpies.talk2me.utilities.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +20,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleUserNotFound(EmailAlreadyExistsException ex) {
+    public ResponseEntity<ErrorResponseDto> handleUserAlreaduExists(EmailAlreadyExistsException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("EMAIL_ALREADY_EXISTS", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IncorrectPasswordOfUserException.class)
-    public ResponseEntity<ErrorResponseDto> handleUserNotFound(IncorrectPasswordOfUserException ex) {
+    public ResponseEntity<ErrorResponseDto> handleIncorrectPasswordOfUser(IncorrectPasswordOfUserException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("INCORRECT_PASSWORD_OF_USER", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(TimeOutLoginException.class)
+    public ResponseEntity<ErrorResponseDto> handleTimeOutLogin(TimeOutLoginException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto("TIME_OUT_LOGIN", ex.getMessage(), ex.getTimeOut());
+        return new ResponseEntity<>(errorResponse, HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @ExceptionHandler(Exception.class)
