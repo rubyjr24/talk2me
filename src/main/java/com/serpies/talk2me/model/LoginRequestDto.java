@@ -1,4 +1,4 @@
-package com.serpies.talk2me.models;
+package com.serpies.talk2me.model;
 
 public class LoginRequestDto {
     private String email;

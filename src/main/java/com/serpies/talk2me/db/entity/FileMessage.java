@@ -1,4 +1,4 @@
-package com.serpies.talk2me.db.entities;
+package com.serpies.talk2me.db.entity;
 
 import java.io.Serial;
 import java.io.Serializable;

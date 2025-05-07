@@ -1,4 +1,4 @@
-package com.serpies.talk2me.db.entities;
+package com.serpies.talk2me.db.entity;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import com.serpies.talk2me.db.converters.GenderConverter;
+import com.serpies.talk2me.db.converter.GenderConverter;
 import com.serpies.talk2me.db.enums.Gender;
 import jakarta.persistence.*;
 

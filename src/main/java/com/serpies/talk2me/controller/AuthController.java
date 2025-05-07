@@ -1,10 +1,9 @@
-package com.serpies.talk2me.controllers;
+package com.serpies.talk2me.controller;
 
-import com.serpies.talk2me.db.dtos.AuthTokenDto;
-import com.serpies.talk2me.db.entities.AuthToken;
-import com.serpies.talk2me.models.LoginRequestDto;
-import com.serpies.talk2me.models.SignUpRequestDto;
-import com.serpies.talk2me.services.AuthService;
+import com.serpies.talk2me.db.dto.AuthTokenDto;
+import com.serpies.talk2me.model.LoginRequestDto;
+import com.serpies.talk2me.model.SignUpRequestDto;
+import com.serpies.talk2me.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

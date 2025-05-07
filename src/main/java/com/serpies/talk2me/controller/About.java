@@ -1,4 +1,4 @@
-package com.serpies.talk2me.controllers;
+package com.serpies.talk2me.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

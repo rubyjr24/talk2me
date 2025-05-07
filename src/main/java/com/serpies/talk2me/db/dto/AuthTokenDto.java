@@ -1,4 +1,4 @@
-package com.serpies.talk2me.db.dtos;
+package com.serpies.talk2me.db.dto;
 
 import java.util.Date;
 

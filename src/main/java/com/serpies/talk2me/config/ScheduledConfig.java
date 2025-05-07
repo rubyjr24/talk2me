@@ -1,7 +1,7 @@
 package com.serpies.talk2me.config;
 
-import com.serpies.talk2me.db.daos.IAuthTokenDao;
-import com.serpies.talk2me.db.entities.AuthToken;
+import com.serpies.talk2me.db.dao.IAuthTokenDao;
+import com.serpies.talk2me.db.entity.AuthToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;

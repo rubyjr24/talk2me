@@ -1,4 +1,4 @@
-package com.serpies.talk2me.db.converters;
+package com.serpies.talk2me.db.converter;
 
 import com.serpies.talk2me.db.enums.Theme;
 import jakarta.persistence.AttributeConverter;

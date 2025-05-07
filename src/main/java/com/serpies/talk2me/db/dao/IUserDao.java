@@ -1,6 +1,6 @@
-package com.serpies.talk2me.db.daos;
+package com.serpies.talk2me.db.dao;
 
-import com.serpies.talk2me.db.entities.User;
+import com.serpies.talk2me.db.entity.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

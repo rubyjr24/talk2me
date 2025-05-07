@@ -1,6 +1,6 @@
 package com.serpies.talk2me.utilities.security;
 
-import com.serpies.talk2me.models.ErrorResponseDto;
+import com.serpies.talk2me.model.ErrorResponseDto;
 import com.serpies.talk2me.utilities.exceptions.EmailAlreadyExistsException;
 import com.serpies.talk2me.utilities.exceptions.IncorrectPasswordOfUserException;
 import com.serpies.talk2me.utilities.exceptions.TimeOutLoginException;

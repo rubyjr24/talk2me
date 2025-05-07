@@ -1,21 +1,14 @@
-package com.serpies.talk2me.db.entities;
+package com.serpies.talk2me.db.entity;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-import jakarta.persistence.Basic;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "text_messages")
-public class TextMessage implements Serializable {
+@Table(name = "chat_messages")
+public class ChatMessage implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -25,23 +18,19 @@ public class TextMessage implements Serializable {
     @Basic(optional = false)
     private Long id;
 
-    @Basic(optional = false)
-    private String message;
+    @JoinColumn(name = "chat_id", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Chat chatId;
 
     @JoinColumn(name = "message_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Message messageId;
 
-    public TextMessage() {
+    public ChatMessage() {
     }
 
-    public TextMessage(Long id) {
+    public ChatMessage(Long id) {
         this.id = id;
-    }
-
-    public TextMessage(Long id, String message) {
-        this.id = id;
-        this.message = message;
     }
 
     public Long getId() {
@@ -52,12 +41,12 @@ public class TextMessage implements Serializable {
         this.id = id;
     }
 
-    public String getMessage() {
-        return message;
+    public Chat getChatId() {
+        return chatId;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setChatId(Chat chatId) {
+        this.chatId = chatId;
     }
 
     public Message getMessageId() {
@@ -70,7 +59,7 @@ public class TextMessage implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof TextMessage that)) return false;
+        if (!(o instanceof ChatMessage that)) return false;
         return Objects.equals(id, that.id);
     }
 
@@ -81,9 +70,9 @@ public class TextMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "TextMessage{" +
+        return "ChatMessage{" +
                 "id=" + id +
-                ", message='" + message + '\'' +
+                ", chatId=" + chatId +
                 ", messageId=" + messageId +
                 '}';
     }

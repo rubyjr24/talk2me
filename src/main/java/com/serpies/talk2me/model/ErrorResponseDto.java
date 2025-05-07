@@ -1,4 +1,4 @@
-package com.serpies.talk2me.models;
+package com.serpies.talk2me.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

@@ -1,11 +1,11 @@
-package com.serpies.talk2me.db.entities;
+package com.serpies.talk2me.db.entity;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.serpies.talk2me.db.converters.LanguageConverter;
-import com.serpies.talk2me.db.converters.ThemeConverter;
+import com.serpies.talk2me.db.converter.LanguageConverter;
+import com.serpies.talk2me.db.converter.ThemeConverter;
 import com.serpies.talk2me.db.enums.Language;
 import com.serpies.talk2me.db.enums.Theme;
 import jakarta.persistence.*;

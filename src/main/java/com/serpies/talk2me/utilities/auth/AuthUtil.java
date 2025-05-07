@@ -1,7 +1,7 @@
 package com.serpies.talk2me.utilities.auth;
 
 import com.serpies.talk2me.config.Config;
-import com.serpies.talk2me.db.entities.AuthToken;
+import com.serpies.talk2me.db.entity.AuthToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

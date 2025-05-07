@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
-@EntityScan(basePackages = "com.serpies.talk2me.db.entities")
+@EntityScan(basePackages = "com.serpies.talk2me.db.entity")
 public class JpaConfig {
 
 }

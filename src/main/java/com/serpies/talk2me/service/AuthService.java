@@ -1,14 +1,14 @@
-package com.serpies.talk2me.services;
+package com.serpies.talk2me.service;
 
 import com.serpies.talk2me.config.Config;
-import com.serpies.talk2me.db.dtos.AuthTokenDto;
-import com.serpies.talk2me.db.entities.AuthToken;
-import com.serpies.talk2me.db.daos.IAuthTokenDao;
-import com.serpies.talk2me.db.daos.IUserDao;
-import com.serpies.talk2me.db.entities.User;
+import com.serpies.talk2me.db.dto.AuthTokenDto;
+import com.serpies.talk2me.db.entity.AuthToken;
+import com.serpies.talk2me.db.dao.IAuthTokenDao;
+import com.serpies.talk2me.db.dao.IUserDao;
+import com.serpies.talk2me.db.entity.User;
 import com.serpies.talk2me.db.enums.Gender;
-import com.serpies.talk2me.models.LoginRequestDto;
-import com.serpies.talk2me.models.SignUpRequestDto;
+import com.serpies.talk2me.model.LoginRequestDto;
+import com.serpies.talk2me.model.SignUpRequestDto;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.utilities.auth.AuthUtil;
 import com.serpies.talk2me.utilities.exceptions.EmailAlreadyExistsException;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 

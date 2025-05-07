@@ -1,8 +1,7 @@
 package com.serpies.talk2me.utilities.security;
 
-import com.serpies.talk2me.config.Config;
-import com.serpies.talk2me.db.daos.IAuthTokenDao;
-import com.serpies.talk2me.db.daos.IUserDao;
+import com.serpies.talk2me.db.dao.IAuthTokenDao;
+import com.serpies.talk2me.db.dao.IUserDao;
 import com.serpies.talk2me.utilities.Assert;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
