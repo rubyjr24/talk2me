@@ -24,17 +24,20 @@ public class ChatUser implements Serializable {
     @Column(name = "joined_at")
     private Date joinedAt;
 
-    @JoinColumn(name = "chat_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Chat chatId;
+    @Basic(optional = false)
+    @Column(name = "chat_id")
+    private Long chatId;
 
-    @JoinColumn(name = "id_last_message_sent", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Message idLastMessageSent;
+    @Column(name = "id_last_message_sent")
+    private Long idLastMessageSent;
 
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private User userId;
+    @Basic(optional = false)
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Basic(optional = false)
+    @Column(name = "is_admin")
+    private Boolean isAdmin;
 
     public ChatUser() {
     }
@@ -64,28 +67,36 @@ public class ChatUser implements Serializable {
         this.joinedAt = joinedAt;
     }
 
-    public Chat getChatId() {
+    public Long getChatId() {
         return chatId;
     }
 
-    public void setChatId(Chat chatId) {
+    public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
 
-    public Message getIdLastMessageSent() {
+    public Long getIdLastMessageSent() {
         return idLastMessageSent;
     }
 
-    public void setIdLastMessageSent(Message idLastMessageSent) {
+    public void setIdLastMessageSent(Long idLastMessageSent) {
         this.idLastMessageSent = idLastMessageSent;
     }
 
-    public User getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(User userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Boolean getIsAdmin() {
+        return this.isAdmin;
+    }
+
+    public void setIsAdmin(Boolean admin) {
+        this.isAdmin = admin;
     }
 
     @Override
@@ -107,12 +118,14 @@ public class ChatUser implements Serializable {
                 ", chatId=" + chatId +
                 ", idLastMessageSent=" + idLastMessageSent +
                 ", userId=" + userId +
+                ", isAdmin=" + isAdmin +
                 '}';
     }
 
     @PrePersist // Establece un valor por defecto antes de persistir
     public void prePersist() {
         if (this.joinedAt == null) this.joinedAt = new Date();
+        if (this.isAdmin == null) this.isAdmin = false;
     }
 
 }
