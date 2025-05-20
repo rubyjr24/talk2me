@@ -1,4 +1,4 @@
-package com.serpies.talk2me.utilities.security.auth;
+package com.serpies.talk2me.security.auth;
 
 import com.serpies.talk2me.utilities.Properties;
 import jakarta.servlet.FilterChain;

@@ -1,4 +1,4 @@
-package com.serpies.talk2me.utilities.exceptions;
+package com.serpies.talk2me.exceptions;
 
 import java.util.Date;
 

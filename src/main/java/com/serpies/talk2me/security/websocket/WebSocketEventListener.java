@@ -1,6 +1,6 @@
-package com.serpies.talk2me.utilities.security.websocket;
+package com.serpies.talk2me.security.websocket;
 
-import com.serpies.talk2me.utilities.security.auth.JwtUtil;
+import com.serpies.talk2me.security.auth.JwtUtil;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;

@@ -1,10 +1,10 @@
-package com.serpies.talk2me.controller;
+package com.serpies.talk2me.security;
 
 import com.serpies.talk2me.model.ErrorResponseDto;
-import com.serpies.talk2me.utilities.exceptions.EmailAlreadyExistsException;
-import com.serpies.talk2me.utilities.exceptions.IncorrectPasswordOfUserException;
-import com.serpies.talk2me.utilities.exceptions.TimeOutLoginException;
-import com.serpies.talk2me.utilities.exceptions.UserNotFoundException;
+import com.serpies.talk2me.exceptions.EmailAlreadyExistsException;
+import com.serpies.talk2me.exceptions.IncorrectPasswordOfUserException;
+import com.serpies.talk2me.exceptions.TimeOutLoginException;
+import com.serpies.talk2me.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
