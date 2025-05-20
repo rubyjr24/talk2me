@@ -1,14 +1,21 @@
-package com.serpies.talk2me.utilities.security;
+package com.serpies.talk2me.controller;
 
 import com.serpies.talk2me.model.ErrorResponseDto;
-import com.serpies.talk2me.utilities.exceptions.*;
+import com.serpies.talk2me.utilities.exceptions.EmailAlreadyExistsException;
+import com.serpies.talk2me.utilities.exceptions.IncorrectPasswordOfUserException;
+import com.serpies.talk2me.utilities.exceptions.TimeOutLoginException;
+import com.serpies.talk2me.utilities.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final String ERROR_PATH = "/private/errors";
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handle(UserNotFoundException ex) {
@@ -34,12 +41,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.TOO_MANY_REQUESTS);
     }
 
+    @MessageExceptionHandler(IllegalArgumentException.class)
+    @SendToUser(ERROR_PATH)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDto> handle(IllegalArgumentException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST ", ex.getMessage());
+        ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @MessageExceptionHandler(Exception.class)
+    @SendToUser(ERROR_PATH)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handle(Exception ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("INTERNAL_SERVER_ERROR", "Something went wrong");

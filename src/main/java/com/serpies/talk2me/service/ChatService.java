@@ -12,9 +12,11 @@ import com.serpies.talk2me.db.entity.User;
 import com.serpies.talk2me.model.CreateChatRequestDto;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.utilities.exceptions.NotValidTokenException;
-import com.serpies.talk2me.utilities.security.JwtUtil;
+import com.serpies.talk2me.utilities.security.auth.JwtUtil;
+import com.serpies.talk2me.utilities.security.websocket.WebSocketEventListener;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +26,11 @@ import java.util.Set;
 
 @Service
 public class ChatService {
+
+    private static final String NEW_CHAT_PATH = "/private/chat/new";
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -38,7 +45,7 @@ public class ChatService {
     private IUserDao userDao;
 
     @Transactional
-    public ChatDto createChat(CreateChatRequestDto createChatRequestDto, String token){
+    public void createChat(CreateChatRequestDto createChatRequestDto, String token){
 
         Assert.ifCondition(!jwtUtil.isTokenValid(token), new NotValidTokenException("The token must be valid"));
 
@@ -82,19 +89,33 @@ public class ChatService {
                             user.getName(),
                             user.getSurname(),
                             user.getEmail(),
-                            user.getGender(),
-                            user.getLastConnection()
+                            user.getLastConnection(),
+                            user.getGender()
                     ))
             );
         }
 
-        return new ChatDto(
+        ChatDto chatDto = new ChatDto(
                 chat.getId(),
                 chat.getName(),
                 chat.getDescription(),
                 chat.isPrivate(),
                 chatUserDtoSet
         );
+
+        for (User user: users){
+
+            String sessionId = WebSocketEventListener.getSessionIdForUser(user.getId());
+
+            if (sessionId == null) continue;
+
+            this.messagingTemplate.convertAndSendToUser(
+                    user.getEmail(),
+                    NEW_CHAT_PATH,
+                    chatDto
+            );
+
+        }
 
     }
 

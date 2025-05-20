@@ -1,6 +1,6 @@
-package com.serpies.talk2me.utilities.auth;
+package com.serpies.talk2me.utilities.security.auth;
 
-import com.serpies.talk2me.config.Config;
+import com.serpies.talk2me.utilities.Properties;
 import com.serpies.talk2me.db.entity.AuthToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,13 +12,13 @@ import java.util.Date;
 public class AuthUtil {
 
     @Autowired
-    private Config config;
+    private Properties properties;
 
     public boolean hasTimeOut(AuthToken authToken){
 
         Date now = new Date();
 
-        long secondsTimeOut = (authToken.getUnsuccessfulAttempts() / config.getTokenAttemptsBeforeTimeOut()) * config.getTokenTimeOut();
+        long secondsTimeOut = (authToken.getUnsuccessfulAttempts() / properties.getTokenAttemptsBeforeTimeOut()) * properties.getTokenTimeOut();
         Instant timeOut = authToken.getLastAttempt().toInstant().plusSeconds(secondsTimeOut);
 
         return authToken.getUnsuccessfulAttempts() != 0

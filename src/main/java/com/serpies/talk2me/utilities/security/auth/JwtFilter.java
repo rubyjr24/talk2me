@@ -1,6 +1,6 @@
-package com.serpies.talk2me.utilities.security;
+package com.serpies.talk2me.utilities.security.auth;
 
-import com.serpies.talk2me.config.Config;
+import com.serpies.talk2me.utilities.Properties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,23 +8,24 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private static final String AUTH_HEADER = "Authorization";
+    public static final String AUTH_HEADER = "Authorization";
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
-    private Config config;
+    private Properties properties;
 
     @Override
     public void doFilterInternal(
@@ -40,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String authTypeWithSpace = this.config.getAuthType().concat(" ");
+        String authTypeWithSpace = this.properties.getAuthType().concat(" ");
 
         if (!authHeader.startsWith(authTypeWithSpace)) {
             filterChain.doFilter(request, response);
@@ -57,7 +58,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, null, List.of());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            Map<String, Object> details = new HashMap<>();
+            details.put(JwtUtil.USER_ID_FIELD, this.jwtUtil.getUserId(token));
+            authentication.setDetails(details);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

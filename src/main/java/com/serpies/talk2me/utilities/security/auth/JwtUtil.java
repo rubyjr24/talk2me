@@ -1,9 +1,10 @@
-package com.serpies.talk2me.utilities.security;
+package com.serpies.talk2me.utilities.security.auth;
 
 import com.serpies.talk2me.db.dao.IAuthTokenDao;
 import com.serpies.talk2me.db.dao.IUserDao;
 import com.serpies.talk2me.utilities.Assert;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

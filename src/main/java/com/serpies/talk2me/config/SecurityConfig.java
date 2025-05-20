@@ -1,6 +1,6 @@
 package com.serpies.talk2me.config;
 
-import com.serpies.talk2me.utilities.security.JwtFilter;
+import com.serpies.talk2me.utilities.security.auth.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

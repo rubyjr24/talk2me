@@ -1,21 +1,20 @@
 package com.serpies.talk2me.service;
 
-import com.serpies.talk2me.config.Config;
-import com.serpies.talk2me.db.dto.AuthTokenDto;
-import com.serpies.talk2me.db.entity.AuthToken;
+import com.serpies.talk2me.utilities.Properties;
 import com.serpies.talk2me.db.dao.IAuthTokenDao;
 import com.serpies.talk2me.db.dao.IUserDao;
+import com.serpies.talk2me.db.dto.AuthTokenDto;
+import com.serpies.talk2me.db.dto.UserDto;
+import com.serpies.talk2me.db.entity.AuthToken;
 import com.serpies.talk2me.db.entity.User;
 import com.serpies.talk2me.db.enums.Gender;
-import com.serpies.talk2me.model.LoginRequestDto;
-import com.serpies.talk2me.model.SignUpRequestDto;
 import com.serpies.talk2me.utilities.Assert;
-import com.serpies.talk2me.utilities.auth.AuthUtil;
+import com.serpies.talk2me.utilities.security.auth.AuthUtil;
 import com.serpies.talk2me.utilities.exceptions.EmailAlreadyExistsException;
 import com.serpies.talk2me.utilities.exceptions.IncorrectPasswordOfUserException;
 import com.serpies.talk2me.utilities.exceptions.TimeOutLoginException;
 import com.serpies.talk2me.utilities.exceptions.UserNotFoundException;
-import com.serpies.talk2me.utilities.security.JwtUtil;
+import com.serpies.talk2me.utilities.security.auth.JwtUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ import java.util.Optional;
 public class AuthService {
 
     @Autowired
-    private Config config;
+    private Properties properties;
 
     @Autowired
     private IAuthTokenDao authTokenDao;
@@ -42,10 +41,10 @@ public class AuthService {
     @Autowired
     private AuthUtil authUtil;
 
-    public AuthTokenDto login(LoginRequestDto loginRequestDto){
+    public AuthTokenDto login(UserDto userDto){
 
-        String email = loginRequestDto.getEmail();
-        String password = loginRequestDto.getPassword();
+        String email = userDto.getEmail();
+        String password = userDto.getPassword();
 
         Assert.isNull(email, "email cannot be null");
         Assert.isNull(password, "password cannot be null");
@@ -58,7 +57,7 @@ public class AuthService {
         String passwordUserDb = user.getPassword();
 
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + config.getTokenExpirationTime() * 1000);
+        Date expiration = new Date(now.getTime() + properties.getTokenExpirationTime() * 1000);
 
         Optional<AuthToken> optionalAuthToken = this.authTokenDao.findById(user.getId());
 
@@ -72,7 +71,7 @@ public class AuthService {
             return this.authTokenDao.save(newAuthToken);
         });
 
-        long secondsTimeOut = (authToken.getUnsuccessfulAttempts() / config.getTokenAttemptsBeforeTimeOut()) * config.getTokenTimeOut();
+        long secondsTimeOut = (authToken.getUnsuccessfulAttempts() / properties.getTokenAttemptsBeforeTimeOut()) * properties.getTokenTimeOut();
         Instant timeOut = authToken.getLastAttempt().toInstant().plusSeconds(secondsTimeOut);
 
         Assert.ifCondition(authUtil.hasTimeOut(authToken), new TimeOutLoginException("Many unsuccessful attempts have been made", Date.from(timeOut)));
@@ -104,13 +103,13 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthTokenDto signUp(SignUpRequestDto signUpRequestDto){
+    public AuthTokenDto signUp(UserDto userDto){
 
-        String email = signUpRequestDto.getEmail();
-        String password = signUpRequestDto.getPassword();
-        String name = signUpRequestDto.getName();
-        String surname = signUpRequestDto.getSurname();
-        Gender gender = signUpRequestDto.getGender();
+        String email = userDto.getEmail();
+        String password = userDto.getPassword();
+        String name = userDto.getName();
+        String surname = userDto.getSurname();
+        Gender gender = userDto.getGender();
 
         Assert.isNull(email, "email cannot be null");
         Assert.isNull(password, "password cannot be null");
@@ -131,7 +130,7 @@ public class AuthService {
         user = this.userDao.save(user);
 
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + config.getTokenExpirationTime() * 1000);
+        Date expiration = new Date(now.getTime() + properties.getTokenExpirationTime() * 1000);
 
         AuthToken authToken = new AuthToken();
         authToken.setUserId(user.getId());
