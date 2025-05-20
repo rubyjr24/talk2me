@@ -13,7 +13,6 @@ import com.serpies.talk2me.model.CreateChatRequestDto;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.exceptions.NotValidTokenException;
 import com.serpies.talk2me.security.auth.JwtUtil;
-import com.serpies.talk2me.security.websocket.WebSocketEventListener;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -104,10 +103,6 @@ public class ChatService {
         );
 
         for (User user: users){
-
-            String sessionId = WebSocketEventListener.getSessionIdForUser(user.getId());
-
-            if (sessionId == null) continue;
 
             this.messagingTemplate.convertAndSendToUser(
                     user.getEmail(),
