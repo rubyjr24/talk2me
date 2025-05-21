@@ -46,6 +46,11 @@ public class ChatService {
     @Transactional
     public void createChat(CreateChatRequestDto createChatRequestDto, String token){
 
+        Assert.isNull(createChatRequestDto, "No data received");
+        Assert.isNull(token, "Token not received");
+        Assert.isNull(createChatRequestDto.getName(), "Name not received");
+        Assert.isNull(createChatRequestDto.getUserIds(), "User list has not been received");
+
         Assert.ifCondition(!jwtUtil.isTokenValid(token), new NotValidTokenException("The token must be valid"));
 
         Long userId = jwtUtil.getUserId(token);

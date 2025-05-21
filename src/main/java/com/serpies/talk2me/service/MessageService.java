@@ -49,6 +49,11 @@ public class MessageService {
     @Transactional
     public void createMessage(CreateMessageRequestDto createMessageRequestDto, String token){
 
+        Assert.isNull(createMessageRequestDto, "No data received");
+        Assert.isNull(token, "Token not received");
+        Assert.isNull(createMessageRequestDto.getChatId(), "Chat id not received");
+        Assert.isNull(createMessageRequestDto.getMessage(), "Message not received");
+
         Assert.ifCondition(!this.jwtUtil.isTokenValid(token), new NotValidTokenException("The token must be valid"));
 
         Long userId = this.jwtUtil.getUserId(token);
