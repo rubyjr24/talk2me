@@ -1,5 +1,6 @@
-package com.serpies.talk2me.security.auth;
+package com.serpies.talk2me.security;
 
+import com.serpies.talk2me.utilities.auth.JwtUtil;
 import com.serpies.talk2me.utilities.Properties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

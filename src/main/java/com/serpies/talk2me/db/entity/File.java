@@ -31,7 +31,7 @@ public class File implements Serializable {
     @OneToMany(mappedBy = "idProfilePicture", fetch = FetchType.LAZY)
     private List<UserConfig> userConfigList;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fileId", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "file", fetch = FetchType.LAZY)
     private List<FileMessage> fileMessageList;
 
     public File() {

@@ -1,4 +1,4 @@
-package com.serpies.talk2me.security;
+package com.serpies.talk2me.security.handler;
 
 import com.serpies.talk2me.model.ErrorResponseDto;
 import com.serpies.talk2me.exceptions.EmailAlreadyExistsException;

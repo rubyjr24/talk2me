@@ -1,4 +1,4 @@
-package com.serpies.talk2me.security.auth;
+package com.serpies.talk2me.utilities.auth;
 
 import com.serpies.talk2me.db.dao.IAuthTokenDao;
 import com.serpies.talk2me.db.dao.IUserDao;

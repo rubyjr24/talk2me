@@ -21,6 +21,9 @@ public class Properties {
     @Value("${token.expiration_time}")
     private Long tokenExpirationTime;
 
+    @Value("${images.path}")
+    private String imagesPath;
+
     public String getAuthType() {
         return authType;
     }
@@ -39,5 +42,9 @@ public class Properties {
 
     public Integer getTokenAttemptsBeforeTimeOut() {
         return tokenAttemptsBeforeTimeOut;
+    }
+
+    public String getImagesPath() {
+        return imagesPath;
     }
 }

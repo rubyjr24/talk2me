@@ -1,7 +1,5 @@
-package com.serpies.talk2me.security.auth;
+package com.serpies.talk2me.utilities.auth;
 
-import com.serpies.talk2me.db.dao.IUserDao;
-import com.serpies.talk2me.db.entity.User;
 import com.serpies.talk2me.exceptions.NotValidTokenException;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.utilities.Properties;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class AuthUtil {

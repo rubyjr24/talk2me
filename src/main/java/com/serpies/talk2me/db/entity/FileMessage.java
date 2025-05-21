@@ -18,10 +18,9 @@ public class FileMessage implements Serializable {
     @Column(name = "message_id")
     private Long messageId;
 
-
     @JoinColumn(name = "file_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private File fileId;
+    private File file;
 
     @JoinColumn(name = "message_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -38,12 +37,12 @@ public class FileMessage implements Serializable {
         this.messageId = messageId;
     }
 
-    public File getFileId() {
-        return fileId;
+    public File getFile() {
+        return file;
     }
 
-    public void setFileId(File fileId) {
-        this.fileId = fileId;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public Message getMessage() {
@@ -69,7 +68,7 @@ public class FileMessage implements Serializable {
     public String toString() {
         return "FileMessage{" +
                 "messageId=" + messageId +
-                ", fileId=" + fileId +
+                ", file=" + file +
                 ", message=" + message +
                 '}';
     }
