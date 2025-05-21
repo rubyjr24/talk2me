@@ -8,6 +8,7 @@ import com.serpies.talk2me.exceptions.NotValidTokenException;
 import com.serpies.talk2me.exceptions.UserNotFoundException;
 import com.serpies.talk2me.exceptions.UserNotInChatException;
 import com.serpies.talk2me.model.CreateMessageRequestDto;
+import com.serpies.talk2me.security.auth.AuthUtil;
 import com.serpies.talk2me.security.auth.JwtUtil;
 import com.serpies.talk2me.utilities.Assert;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,9 @@ public class MessageService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthUtil authUtil;
 
     @Autowired
     private IMessageDao messageDao;
@@ -54,9 +58,7 @@ public class MessageService {
         Assert.isNull(createMessageRequestDto.getChatId(), "Chat id not received");
         Assert.isNull(createMessageRequestDto.getMessage(), "Message not received");
 
-        Assert.ifCondition(!this.jwtUtil.isTokenValid(token), new NotValidTokenException("The token must be valid"));
-
-        Long userId = this.jwtUtil.getUserId(token);
+        Long userId = this.authUtil.validateAndGetUser(token);
         Optional<User> userOptional = this.userDao.findById(userId);
 
         Assert.ifCondition(userOptional.isEmpty(), new UserNotFoundException("The user must be exist"));
@@ -88,8 +90,6 @@ public class MessageService {
         messageDto.setMessage(createMessageRequestDto.getMessage());
         messageDto.setCreatedAt(message.getCreatedAt());
         messageDto.setImportance(message.getImportance());
-
-
 
         for (ChatUser chatUser: chat.getChatUserList()){
 

@@ -10,6 +10,7 @@ import com.serpies.talk2me.db.entity.Chat;
 import com.serpies.talk2me.db.entity.ChatUser;
 import com.serpies.talk2me.db.entity.User;
 import com.serpies.talk2me.model.CreateChatRequestDto;
+import com.serpies.talk2me.security.auth.AuthUtil;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.exceptions.NotValidTokenException;
 import com.serpies.talk2me.security.auth.JwtUtil;
@@ -35,6 +36,9 @@ public class ChatService {
     private JwtUtil jwtUtil;
 
     @Autowired
+    private AuthUtil authUtil;
+
+    @Autowired
     private IChatDao chatDao;
 
     @Autowired
@@ -51,9 +55,7 @@ public class ChatService {
         Assert.isNull(createChatRequestDto.getName(), "Name not received");
         Assert.isNull(createChatRequestDto.getUserIds(), "User list has not been received");
 
-        Assert.ifCondition(!jwtUtil.isTokenValid(token), new NotValidTokenException("The token must be valid"));
-
-        Long userId = jwtUtil.getUserId(token);
+        Long userId = this.authUtil.validateAndGetUser(token);
         Set<Long> usersIds = createChatRequestDto.getUserIds();
         usersIds.add(userId);
 
