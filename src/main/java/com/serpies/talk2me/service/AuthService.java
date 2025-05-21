@@ -17,6 +17,7 @@ import com.serpies.talk2me.exceptions.UserNotFoundException;
 import com.serpies.talk2me.security.auth.JwtUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -40,6 +41,8 @@ public class AuthService {
 
     @Autowired
     private AuthUtil authUtil;
+
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public AuthTokenDto login(UserDto userDto){
 
@@ -76,7 +79,7 @@ public class AuthService {
 
         Assert.ifCondition(authUtil.hasTimeOut(authToken), new TimeOutLoginException("Many unsuccessful attempts have been made", Date.from(timeOut)));
 
-        if (!password.equals(passwordUserDb)){
+        if (!encoder.matches(password, passwordUserDb)){
 
             authToken.setUnsuccessfulAttempts( (short) (authToken.getUnsuccessfulAttempts().intValue() + 1));
             authToken.setLastAttempt(now);
@@ -125,7 +128,7 @@ public class AuthService {
         user.setSurname(surname);
         user.setGender(gender);
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(encoder.encode(password));
 
         user = this.userDao.save(user);
 
