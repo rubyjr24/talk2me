@@ -39,6 +39,10 @@ public class ChatUser implements Serializable {
     @Column(name = "is_admin")
     private Boolean isAdmin;
 
+    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
     public ChatUser() {
     }
 
@@ -99,6 +103,14 @@ public class ChatUser implements Serializable {
         this.isAdmin = admin;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ChatUser chatUser)) return false;
@@ -119,6 +131,7 @@ public class ChatUser implements Serializable {
                 ", idLastMessageSent=" + idLastMessageSent +
                 ", userId=" + userId +
                 ", isAdmin=" + isAdmin +
+                ", user=" + user +
                 '}';
     }
 

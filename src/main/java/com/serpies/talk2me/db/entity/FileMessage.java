@@ -14,27 +14,28 @@ public class FileMessage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    private Long id;
+    @Column(name = "message_id")
+    private Long messageId;
+
 
     @JoinColumn(name = "file_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private File fileId;
 
-    @JoinColumn(name = "message_id", referencedColumnName = "id")
+    @JoinColumn(name = "message_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Message messageId;
+    private Message message;
 
     public FileMessage() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getMessageId() {
+        return messageId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
     }
 
     public File getFileId() {
@@ -45,32 +46,31 @@ public class FileMessage implements Serializable {
         this.fileId = fileId;
     }
 
-    public Message getMessageId() {
-        return messageId;
+    public Message getMessage() {
+        return message;
     }
 
-    public void setMessageId(Message messageId) {
-        this.messageId = messageId;
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof FileMessage that)) return false;
-        return Objects.equals(id, that.id);
+        return Objects.equals(messageId, that.messageId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(messageId);
     }
 
     @Override
     public String toString() {
         return "FileMessage{" +
-                "id=" + id +
+                "messageId=" + messageId +
                 ", fileId=" + fileId +
-                ", messageId=" + messageId +
+                ", message=" + message +
                 '}';
     }
-
 }

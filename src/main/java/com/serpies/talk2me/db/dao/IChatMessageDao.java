@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IChatMessage extends CrudRepository<ChatMessage, Long> {
+public interface IChatMessageDao extends CrudRepository<ChatMessage, Long> {
 }

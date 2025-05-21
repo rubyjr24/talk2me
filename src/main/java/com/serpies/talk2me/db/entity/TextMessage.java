@@ -14,70 +14,68 @@ public class TextMessage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    private Long id;
+    @Column(name = "message_id")
+    private Long messageId;
 
     @Basic(optional = false)
-    private String message;
+    @Column(name = "message")
+    private String messageData;
 
-    @JoinColumn(name = "message_id", referencedColumnName = "id")
+    @JoinColumn(name = "message_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Message messageId;
+    private Message message;
 
     public TextMessage() {
     }
 
-    public TextMessage(Long id) {
-        this.id = id;
-    }
-
-    public TextMessage(Long id, String message) {
-        this.id = id;
+    public TextMessage(Long messageId, String messageData, Message message) {
+        this.messageId = messageId;
+        this.messageData = messageData;
         this.message = message;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Message getMessageId() {
+    public Long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(Message messageId) {
+    public void setMessageId(Long messageId) {
         this.messageId = messageId;
+    }
+
+    public String getMessageData() {
+        return messageData;
+    }
+
+    public void setMessageData(String messageData) {
+        this.messageData = messageData;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof TextMessage that)) return false;
-        return Objects.equals(id, that.id);
+        return Objects.equals(messageId, that.messageId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(messageId);
     }
 
     @Override
     public String toString() {
         return "TextMessage{" +
-                "id=" + id +
-                ", message='" + message + '\'' +
-                ", messageId=" + messageId +
+                "messageId=" + messageId +
+                ", messageData='" + messageData + '\'' +
+                ", message=" + message +
                 '}';
     }
 }
