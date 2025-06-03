@@ -6,10 +6,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface IChatUserDao extends CrudRepository<ChatUser, Long> {
 
-    @Query("SELECT COUNT(cu) > 0 FROM ChatUser cu WHERE cu.userId = :userId AND cu.chatId = :chatId")
-    boolean userExistsInChat(@Param("userId") Long userId, @Param("chatId") Long chatId);
+    @Query("SELECT cu FROM ChatUser cu WHERE cu.userId = :userId AND cu.chatId = :chatId")
+    Optional<ChatUser> getChatUserByUserIdAndChatId(@Param("userId") Long userId, @Param("chatId") Long chatId);
 
 }

@@ -86,13 +86,15 @@ public class MessageService {
         Optional<Chat> chatOptional = this.chatDao.findByIdFechingUsers(createMessageRequestDto.getChatId());
 
         Assert.ifCondition(chatOptional.isEmpty(), new ChatNotFoundException("The chat must be exist"));
-        Assert.ifCondition(!this.chatUserDao.userExistsInChat(userId, createMessageRequestDto.getChatId()), new UserNotInChatException("The user must be in the chat to send a message"));
+
+        Optional<ChatUser> chatUserOptional = this.chatUserDao.getChatUserByUserIdAndChatId(userId, createMessageRequestDto.getChatId());
+        Assert.ifCondition(chatUserOptional.isEmpty(), new UserNotInChatException("The user must be in the chat to send a message"));
 
         Chat chat = chatOptional.get();
+        ChatUser chatUser = chatUserOptional.get();
 
         Message message = new Message();
-        message.setUserId(userId);
-        message.setChatId(chat.getId());
+        message.setChatUserId(chatUser.getId());
         this.messageDao.save(message);
 
         String fileName = null;
@@ -141,9 +143,9 @@ public class MessageService {
             messageDto.setMessage(createMessageRequestDto.getMessage());
         }
 
-        for (ChatUser chatUser: chat.getChatUserList()){
+        for (ChatUser chatUserToSend: chat.getChatUserList()){
 
-            User userToSend = chatUser.getUser();
+            User userToSend = chatUserToSend.getUser();
 
             //if (userToSend.getId() == userId) continue;
 

@@ -21,12 +21,8 @@ public class Message implements Serializable {
     private Long id;
 
     @Basic(optional = false)
-    @Column(name = "chat_id")
-    private Long chatId;
-
-    @Basic(optional = false)
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "chat_user_id")
+    private Long chatUserId;
 
     @Basic(optional = false)
     private Short importance;
@@ -48,11 +44,9 @@ public class Message implements Serializable {
         this.id = id;
     }
 
-    public Message(Long id, short importance, boolean isVisible, Date createdAt) {
+    public Message(Long id, Long chatUserId) {
         this.id = id;
-        this.importance = importance;
-        this.isVisible = isVisible;
-        this.createdAt = createdAt;
+        this.chatUserId = chatUserId;
     }
 
     public Long getId() {
@@ -87,20 +81,12 @@ public class Message implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Long getChatId() {
-        return chatId;
+    public Long getChatUserId() {
+        return chatUserId;
     }
 
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setChatUserId(Long chatUserId) {
+        this.chatUserId = chatUserId;
     }
 
     @Override
@@ -118,8 +104,7 @@ public class Message implements Serializable {
     public String toString() {
         return "Message{" +
                 "id=" + id +
-                ", chatId=" + chatId +
-                ", userId=" + userId +
+                ", chatUserId=" + chatUserId +
                 ", importance=" + importance +
                 ", isVisible=" + isVisible +
                 ", createdAt=" + createdAt +

@@ -101,7 +101,11 @@ public class AuthService {
 
         }
 
-        return new AuthTokenDto(authToken.getToken(), authToken.getExpiresAt());
+        return new AuthTokenDto(
+                authToken.getUserId(),
+                authToken.getToken(),
+                authToken.getExpiresAt()
+        );
 
     }
 
@@ -143,7 +147,11 @@ public class AuthService {
 
         authToken = this.authTokenDao.save(authToken);
 
-        return new AuthTokenDto(authToken.getToken(), authToken.getExpiresAt());
+        return new AuthTokenDto(
+                authToken.getUserId(),
+                authToken.getToken(),
+                authToken.getExpiresAt()
+        );
 
     }
 
