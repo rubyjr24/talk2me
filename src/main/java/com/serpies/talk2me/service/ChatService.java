@@ -9,6 +9,7 @@ import com.serpies.talk2me.db.dto.UserDto;
 import com.serpies.talk2me.db.entity.Chat;
 import com.serpies.talk2me.db.entity.ChatUser;
 import com.serpies.talk2me.db.entity.User;
+import com.serpies.talk2me.exceptions.NotValidTokenException;
 import com.serpies.talk2me.model.CreateChatRequestDto;
 import com.serpies.talk2me.utilities.auth.AuthUtil;
 import com.serpies.talk2me.utilities.Assert;
@@ -118,6 +119,60 @@ public class ChatService {
 
         }
 
+    }
+    
+    public List<ChatDto> getAllChatsByUserId(String authorizationHeaderValue){
+
+        Assert.isNull(authorizationHeaderValue, new NotValidTokenException("You must have a token"));
+
+        String tokenParesed = this.authUtil.getTokenFromAuthorization(authorizationHeaderValue);
+        Long userId = this.authUtil.validateAndGetUser(tokenParesed);
+
+        List<Chat> chats = this.chatDao.findByUserIdFechingUsers(userId);
+        
+        List<ChatDto> result = new ArrayList<>();
+        for (Chat chat: chats){
+            
+            ChatDto chatDto = new ChatDto();
+            chatDto.setId(chat.getId());
+            chatDto.setName(chat.getName());
+            chatDto.setDescription(chat.getDescription());
+            chatDto.setIsPrivate(chat.isPrivate());
+            
+            Set<ChatUserDto> chatUserDtoSet = new HashSet<>();
+            
+            for (ChatUser chatUser: chat.getChatUserList()){
+                ChatUserDto chatUserDto = getChatUserDto(chatUser);
+                chatUserDtoSet.add(chatUserDto);
+            }
+
+            chatDto.setUsers(chatUserDtoSet);
+            
+            result.add(chatDto);
+            
+        }
+        
+        return result;
+        
+    }
+
+    private static ChatUserDto getChatUserDto(ChatUser chatUser) {
+        ChatUserDto chatUserDto = new ChatUserDto();
+        chatUserDto.setAdmin(chatUser.getIsAdmin());
+
+        User user = chatUser.getUser();
+
+        UserDto userDto = new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getLastConnection(),
+                user.getGender()
+        );
+
+        chatUserDto.setUser(userDto);
+        return chatUserDto;
     }
 
 }

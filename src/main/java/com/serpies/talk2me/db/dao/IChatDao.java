@@ -20,4 +20,7 @@ public interface IChatDao extends CrudRepository<Chat, Long> {
     @NativeQuery("SELECT c.* FROM chats c INNER JOIN chat_users cu ON c.id = cu.chat_id WHERE cu.user_id = :userId")
     List<Chat> findByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT DISTINCT c FROM Chat c JOIN FETCH c.chatUserList cu WHERE cu.userId = :userId")
+    List<Chat> findByUserIdFechingUsers(@Param("userId") Long userId);
+
 }
