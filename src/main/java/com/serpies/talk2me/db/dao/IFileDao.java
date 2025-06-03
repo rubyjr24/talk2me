@@ -21,7 +21,7 @@ public interface IFileDao extends CrudRepository<File, Long> {
                     	FROM chat_users cu2
                     	WHERE cu2.chat_id = cu.chat_id
                     )
-                    WHERE m.id = 17 AND cu.user_id = 1;
+                    WHERE m.id = :messageId AND cu.user_id = :userId;
     """)
     Optional<File> getFileByMessageIdAndUserId(@Param("userId") Long userId, @Param("messageId") Long messageId);
 
