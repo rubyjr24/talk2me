@@ -17,6 +17,8 @@ public class MessageDto {
     private byte[] image;
     private String fileName;
 
+    private String uri;
+
     public MessageDto() {
     }
 
@@ -101,5 +103,13 @@ public class MessageDto {
 
     public void setMessageId(Long messageId) {
         this.messageId = messageId;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 }

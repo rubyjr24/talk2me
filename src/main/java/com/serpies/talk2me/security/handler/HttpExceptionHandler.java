@@ -1,10 +1,7 @@
 package com.serpies.talk2me.security.handler;
 
+import com.serpies.talk2me.exceptions.*;
 import com.serpies.talk2me.model.ErrorResponseDto;
-import com.serpies.talk2me.exceptions.EmailAlreadyExistsException;
-import com.serpies.talk2me.exceptions.IncorrectPasswordOfUserException;
-import com.serpies.talk2me.exceptions.TimeOutLoginException;
-import com.serpies.talk2me.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -41,6 +38,12 @@ public class HttpExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handle(IllegalArgumentException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handle(FileNotFoundException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto("FILE_NOT_FOUND", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

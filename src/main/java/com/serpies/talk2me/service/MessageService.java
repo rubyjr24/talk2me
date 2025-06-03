@@ -186,26 +186,27 @@ public class MessageService {
                 Object uriObj = row.get("uri");
 
                 if (message != null) messageDto.setMessage((String) message);
-                else if (uriObj != null) {
+                else if (uriObj != null) messageDto.setUri((String) uriObj);
 
-                    String uriString = (String) uriObj;
-                    URI uri = null;
-                    try{
-                        uri = new URI(uriString);
-                    }catch (URISyntaxException e){}
+//                {
+//                    String uriString = (String) uriObj;
+//                    URI uri = null;
+//                    try{
+//                        uri = new URI(uriString);
+//                    }catch (URISyntaxException e){}
+//
+//
+//                    if (uri != null){
+//                        byte[] data = this.fileUtils.readFile(uri);
+//
+//                        if (data != null){
+//                            messageDto.setImage(data);
+//                            messageDto.setFileName(this.fileUtils.getName(uri));
+//                        }
+//
+//                    }
+//                }
 
-
-                    if (uri != null){
-                        byte[] data = this.fileUtils.readFile(uri);
-
-                        if (data != null){
-                            messageDto.setImage(data);
-                            messageDto.setFileName(this.fileUtils.getName(uri));
-                        }
-
-                    }
-
-                }
 
                 result.add(messageDto);
 
