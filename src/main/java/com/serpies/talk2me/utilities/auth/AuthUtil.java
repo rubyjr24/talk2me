@@ -13,6 +13,9 @@ import java.util.Date;
 @Component
 public class AuthUtil {
 
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer ";
+
     @Autowired
     private Properties properties;
 
@@ -34,6 +37,10 @@ public class AuthUtil {
     public Long validateAndGetUser(String token){
         Assert.ifCondition(!this.jwtUtil.isTokenValid(token), new NotValidTokenException("The token must be valid"));
         return this.jwtUtil.getUserId(token);
+    }
+
+    public String getTokenFromAuthorization(String headerValue){
+        return headerValue.replaceFirst(BEARER, "");
     }
 
 }

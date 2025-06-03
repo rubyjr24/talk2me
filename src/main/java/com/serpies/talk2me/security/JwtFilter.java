@@ -1,5 +1,6 @@
 package com.serpies.talk2me.security;
 
+import com.serpies.talk2me.utilities.auth.AuthUtil;
 import com.serpies.talk2me.utilities.auth.JwtUtil;
 import com.serpies.talk2me.utilities.Properties;
 import jakarta.servlet.FilterChain;
@@ -42,14 +43,12 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String authTypeWithSpace = this.properties.getAuthType().concat(" ");
-
-        if (!authHeader.startsWith(authTypeWithSpace)) {
+        if (!authHeader.startsWith(AuthUtil.BEARER)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(authTypeWithSpace.length());
+        String token = authHeader.substring(AuthUtil.BEARER.length());
         String email = this.jwtUtil.getEmail(token);
 
         if (email == null || !this.jwtUtil.isTokenValid(token)) {

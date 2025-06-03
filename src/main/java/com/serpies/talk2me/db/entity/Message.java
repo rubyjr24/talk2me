@@ -21,6 +21,14 @@ public class Message implements Serializable {
     private Long id;
 
     @Basic(optional = false)
+    @Column(name = "chat_id")
+    private Long chatId;
+
+    @Basic(optional = false)
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Basic(optional = false)
     private Short importance;
 
     @Basic(optional = false)
@@ -32,17 +40,6 @@ public class Message implements Serializable {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "messageId", fetch = FetchType.LAZY)
-    private List<ChatMessage> chatMessageList;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "messageId", fetch = FetchType.LAZY)
-    private List<TextMessage> textMessageList;
-
-    @OneToMany(mappedBy = "idLastMessageSent", fetch = FetchType.LAZY)
-    private List<ChatUser> chatUserList;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "messageId", fetch = FetchType.LAZY)
-    private List<FileMessage> fileMessageList;
 
     public Message() {
     }
@@ -90,36 +87,20 @@ public class Message implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public List<ChatMessage> getChatMessageList() {
-        return chatMessageList;
+    public Long getChatId() {
+        return chatId;
     }
 
-    public void setChatMessageList(List<ChatMessage> chatMessageList) {
-        this.chatMessageList = chatMessageList;
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
     }
 
-    public List<TextMessage> getTextMessageList() {
-        return textMessageList;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setTextMessageList(List<TextMessage> textMessageList) {
-        this.textMessageList = textMessageList;
-    }
-
-    public List<ChatUser> getChatUserList() {
-        return chatUserList;
-    }
-
-    public void setChatUserList(List<ChatUser> chatUserList) {
-        this.chatUserList = chatUserList;
-    }
-
-    public List<FileMessage> getFileMessageList() {
-        return fileMessageList;
-    }
-
-    public void setFileMessageList(List<FileMessage> fileMessageList) {
-        this.fileMessageList = fileMessageList;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -137,13 +118,11 @@ public class Message implements Serializable {
     public String toString() {
         return "Message{" +
                 "id=" + id +
+                ", chatId=" + chatId +
+                ", userId=" + userId +
                 ", importance=" + importance +
                 ", isVisible=" + isVisible +
                 ", createdAt=" + createdAt +
-                ", chatMessageList=" + chatMessageList +
-                ", textMessageList=" + textMessageList +
-                ", chatUserList=" + chatUserList +
-                ", fileMessageList=" + fileMessageList +
                 '}';
     }
 

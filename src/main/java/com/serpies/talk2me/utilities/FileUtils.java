@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -42,6 +43,17 @@ public class FileUtils {
     public String getName(URI uri){
         Path path = Paths.get(uri);
         return path.getFileName().toString();
+    }
+
+    public byte[] readFile(URI uri){
+
+        Path path = Paths.get(uri);
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            return null;
+        }
+
     }
 
 }

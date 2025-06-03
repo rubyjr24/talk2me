@@ -7,6 +7,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageDto {
 
+    private Long messageId;
     private Long chatId;
     private Long userId;
     private Date createdAt;
@@ -19,15 +20,17 @@ public class MessageDto {
     public MessageDto() {
     }
 
-    public MessageDto(Long chatId, Long userId, Date createdAt, String message, Short importance) {
+    public MessageDto(Long messageId, Long chatId, Long userId, Date createdAt, Short importance, String message) {
+        this.messageId = messageId;
         this.chatId = chatId;
         this.userId = userId;
         this.createdAt = createdAt;
-        this.message = message;
         this.importance = importance;
+        this.message = message;
     }
 
-    public MessageDto(Long chatId, Long userId, Date createdAt, Short importance, byte[] image, String fileName) {
+    public MessageDto(Long messageId, Long chatId, Long userId, Date createdAt, Short importance, byte[] image, String fileName) {
+        this.messageId = messageId;
         this.chatId = chatId;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -90,5 +93,13 @@ public class MessageDto {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
     }
 }

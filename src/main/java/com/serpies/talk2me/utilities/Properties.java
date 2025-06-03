@@ -6,9 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Properties {
 
-    @Value("${auth.type}")
-    private String authType;
-
     @Value("${auth.time_out}")
     private Long tokenTimeOut;
 
@@ -24,9 +21,8 @@ public class Properties {
     @Value("${images.path}")
     private String imagesPath;
 
-    public String getAuthType() {
-        return authType;
-    }
+    @Value("${message.limit}")
+    private Integer messageLimit;
 
     public Long getTokenExpirationTime() {
         return tokenExpirationTime;
@@ -46,5 +42,9 @@ public class Properties {
 
     public String getImagesPath() {
         return imagesPath;
+    }
+
+    public Integer getMessageLimit() {
+        return messageLimit;
     }
 }

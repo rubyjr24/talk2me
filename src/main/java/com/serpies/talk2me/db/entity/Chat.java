@@ -36,9 +36,6 @@ public class Chat implements Serializable {
     private Date createdAt;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "chatId", fetch = FetchType.LAZY)
-    private List<ChatMessage> chatMessageList;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "chatId", fetch = FetchType.LAZY)
     private List<ChatUser> chatUserList;
 
     public Chat() {
@@ -96,14 +93,6 @@ public class Chat implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public List<ChatMessage> getChatMessageList() {
-        return chatMessageList;
-    }
-
-    public void setChatMessageList(List<ChatMessage> chatMessageList) {
-        this.chatMessageList = chatMessageList;
-    }
-
     public List<ChatUser> getChatUserList() {
         return chatUserList;
     }
@@ -131,7 +120,6 @@ public class Chat implements Serializable {
                 ", description='" + description + '\'' +
                 ", isPrivate=" + isPrivate +
                 ", createdAt=" + createdAt +
-                ", chatMessageList=" + chatMessageList +
                 ", chatUserList=" + chatUserList +
                 '}';
     }
