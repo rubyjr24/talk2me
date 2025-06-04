@@ -15,30 +15,13 @@ public class MessageDto {
 
     private String message;
     private byte[] image;
+
     private String fileName;
+    private String fileExtension;
 
     private String uri;
 
     public MessageDto() {
-    }
-
-    public MessageDto(Long messageId, Long chatId, Long userId, Date createdAt, Short importance, String message) {
-        this.messageId = messageId;
-        this.chatId = chatId;
-        this.userId = userId;
-        this.createdAt = createdAt;
-        this.importance = importance;
-        this.message = message;
-    }
-
-    public MessageDto(Long messageId, Long chatId, Long userId, Date createdAt, Short importance, byte[] image, String fileName) {
-        this.messageId = messageId;
-        this.chatId = chatId;
-        this.userId = userId;
-        this.createdAt = createdAt;
-        this.importance = importance;
-        this.image = image;
-        this.fileName = fileName;
     }
 
     public Long getChatId() {
@@ -111,5 +94,13 @@ public class MessageDto {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
     }
 }

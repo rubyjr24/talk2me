@@ -4,7 +4,6 @@ import com.serpies.talk2me.db.dao.*;
 import com.serpies.talk2me.db.dto.MessageDto;
 import com.serpies.talk2me.db.entity.*;
 import com.serpies.talk2me.exceptions.*;
-import com.serpies.talk2me.model.CreateMessageRequestDto;
 import com.serpies.talk2me.utilities.FileUtils;
 import com.serpies.talk2me.utilities.Properties;
 import com.serpies.talk2me.utilities.auth.AuthUtil;
@@ -62,32 +61,33 @@ public class MessageService {
     private IFileMessageDao fileMessageDao;
 
     @Transactional
-    public void createMessage(CreateMessageRequestDto createMessageRequestDto, String token){
+    public MessageDto createMessage(MessageDto messageDto, String authorizationHeaderValue){
 
-        Assert.isNull(createMessageRequestDto, "No data received");
-        Assert.isNull(token, "Token not received");
-        Assert.isNull(createMessageRequestDto.getChatId(), "Chat id not received");
+        Assert.isNull(messageDto, "No data received");
+        Assert.isNull(authorizationHeaderValue, "Token not received");
+        Assert.isNull(messageDto.getChatId(), "Chat id not received");
         Assert.ifCondition(
-                createMessageRequestDto.getMessage() == null
+                messageDto.getMessage() == null
                         && (
-                                createMessageRequestDto.getImage() == null
-                                || createMessageRequestDto.getFileExtension() == null
+                            messageDto.getImage() == null
+                            || messageDto.getFileExtension() == null
                         ),
                 "You have to send a text or image message"
         );
 
-        boolean isImage = createMessageRequestDto.getMessage() == null;
+        boolean isImage = messageDto.getMessage() == null;
 
-        Long userId = this.authUtil.validateAndGetUser(token);
+        String tokenParesed = this.authUtil.getTokenFromAuthorization(authorizationHeaderValue);
+        Long userId = this.authUtil.validateAndGetUser(tokenParesed);
         Optional<User> userOptional = this.userDao.findById(userId);
 
         Assert.ifCondition(userOptional.isEmpty(), new UserNotFoundException("The user must be exist"));
 
-        Optional<Chat> chatOptional = this.chatDao.findByIdFechingUsers(createMessageRequestDto.getChatId());
+        Optional<Chat> chatOptional = this.chatDao.findByIdFechingUsers(messageDto.getChatId());
 
         Assert.ifCondition(chatOptional.isEmpty(), new ChatNotFoundException("The chat must be exist"));
 
-        Optional<ChatUser> chatUserOptional = this.chatUserDao.getChatUserByUserIdAndChatId(userId, createMessageRequestDto.getChatId());
+        Optional<ChatUser> chatUserOptional = this.chatUserDao.getChatUserByUserIdAndChatId(userId, messageDto.getChatId());
         Assert.ifCondition(chatUserOptional.isEmpty(), new UserNotInChatException("The user must be in the chat to send a message"));
 
         Chat chat = chatOptional.get();
@@ -102,14 +102,14 @@ public class MessageService {
 
             TextMessage textMessage = new TextMessage();
             textMessage.setMessageId(message.getId());
-            textMessage.setMessageData(createMessageRequestDto.getMessage());
+            textMessage.setMessageData(messageDto.getMessage());
             textMessage.setMessage(message);
             this.textMessageDao.save(textMessage);
 
         }else{
 
             Date now = new Date();
-            Optional<URI> uriOptional = fileUtils.createFile(String.format("%d.%s", now.getTime(), createMessageRequestDto.getFileExtension()), createMessageRequestDto.getImage());
+            Optional<URI> uriOptional = fileUtils.createFile(String.format("%d.%s", now.getTime(), messageDto.getFileExtension()), messageDto.getImage());
 
             Assert.ifCondition(uriOptional.isEmpty(), new InternalServerError("An error occurred while saving the image"));
             URI uri = uriOptional.get();
@@ -129,18 +129,18 @@ public class MessageService {
         }
 
 
-        MessageDto messageDto = new MessageDto();
-        messageDto.setMessageId(message.getId());
-        messageDto.setChatId(chat.getId());
-        messageDto.setUserId(userId);
-        messageDto.setCreatedAt(message.getCreatedAt());
-        messageDto.setImportance(message.getImportance());
+        MessageDto messageDtoResult = new MessageDto();
+        messageDtoResult.setMessageId(message.getId());
+        messageDtoResult.setChatId(chat.getId());
+        messageDtoResult.setUserId(userId);
+        messageDtoResult.setCreatedAt(message.getCreatedAt());
+        messageDtoResult.setImportance(message.getImportance());
 
         if (isImage){
-            messageDto.setImage(createMessageRequestDto.getImage());
-            messageDto.setFileName(fileName);
+            messageDtoResult.setImage(messageDto.getImage());
+            messageDtoResult.setFileName(fileName);
         }else{
-            messageDto.setMessage(createMessageRequestDto.getMessage());
+            messageDtoResult.setMessage(messageDto.getMessage());
         }
 
         for (ChatUser chatUserToSend: chat.getChatUserList()){
@@ -152,10 +152,12 @@ public class MessageService {
             this.messagingTemplate.convertAndSendToUser(
                     userToSend.getEmail(),
                     NEW_MESSAGE_PATH,
-                    messageDto
+                    messageDtoResult
             );
 
         }
+
+        return messageDtoResult;
 
     }
 
@@ -187,26 +189,6 @@ public class MessageService {
 
                 if (message != null) messageDto.setMessage((String) message);
                 else if (uriObj != null) messageDto.setUri((String) uriObj);
-
-//                {
-//                    String uriString = (String) uriObj;
-//                    URI uri = null;
-//                    try{
-//                        uri = new URI(uriString);
-//                    }catch (URISyntaxException e){}
-//
-//
-//                    if (uri != null){
-//                        byte[] data = this.fileUtils.readFile(uri);
-//
-//                        if (data != null){
-//                            messageDto.setImage(data);
-//                            messageDto.setFileName(this.fileUtils.getName(uri));
-//                        }
-//
-//                    }
-//                }
-
 
                 result.add(messageDto);
 
