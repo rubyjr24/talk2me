@@ -13,6 +13,9 @@ public class ChatDto {
     private Boolean isPrivate;
     private Set<ChatUserDto> users;
 
+    private Set<Long> userIds;
+
+
     public ChatDto() {
     }
 
@@ -62,5 +65,13 @@ public class ChatDto {
 
     public void setUsers(Set<ChatUserDto> users) {
         this.users = users;
+    }
+
+    public Set<Long> getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(Set<Long> userIds) {
+        this.userIds = userIds;
     }
 }

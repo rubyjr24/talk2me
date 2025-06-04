@@ -10,7 +10,6 @@ import com.serpies.talk2me.db.entity.Chat;
 import com.serpies.talk2me.db.entity.ChatUser;
 import com.serpies.talk2me.db.entity.User;
 import com.serpies.talk2me.exceptions.NotValidTokenException;
-import com.serpies.talk2me.model.CreateChatRequestDto;
 import com.serpies.talk2me.utilities.auth.AuthUtil;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.utilities.auth.JwtUtil;
@@ -48,27 +47,28 @@ public class ChatService {
     private IUserDao userDao;
 
     @Transactional
-    public void createChat(CreateChatRequestDto createChatRequestDto, String token){
+    public ChatDto createChat(ChatDto chatDto, String authorizationHeaderValue){
 
-        Assert.isNull(createChatRequestDto, "No data received");
-        Assert.isNull(token, "Token not received");
-        Assert.isNull(createChatRequestDto.getName(), "Name not received");
-        Assert.isNull(createChatRequestDto.getUserIds(), "User list has not been received");
+        Assert.isNull(chatDto, "No data received");
+        Assert.isNull(authorizationHeaderValue, "Token not received");
+        Assert.isNull(chatDto.getName(), "Name not received");
+        Assert.isNull(chatDto.getUserIds(), "User list has not been received");
 
-        Long userId = this.authUtil.validateAndGetUser(token);
-        Set<Long> usersIds = createChatRequestDto.getUserIds();
+        String tokenParesed = this.authUtil.getTokenFromAuthorization(authorizationHeaderValue);
+        Long userId = this.authUtil.validateAndGetUser(tokenParesed);
+        Set<Long> usersIds = chatDto.getUserIds();
         usersIds.add(userId);
 
         Assert.ifCondition(usersIds.size() == 1, "Unable to create a chat for one user");
-        Assert.ifCondition(createChatRequestDto.isPrivate() && usersIds.size() > 2, "Too many users for private chat");
+        Assert.ifCondition(chatDto.getIsPrivate() && usersIds.size() > 2, "Too many users for private chat");
 
         List<User> users = this.userDao.findUsersByUserIds(usersIds);
         Assert.ifCondition(users.size() != usersIds.size(), "Not all users exists the app");
 
         Chat chat = new Chat();
-        chat.setName(createChatRequestDto.getName());
-        chat.setDescription(createChatRequestDto.getDescription());
-        chat.setPrivate(createChatRequestDto.isPrivate());
+        chat.setName(chatDto.getName());
+        chat.setDescription(chatDto.getDescription());
+        chat.setPrivate(chatDto.getIsPrivate());
 
         chat = chatDao.save(chat);
 
@@ -101,7 +101,7 @@ public class ChatService {
             );
         }
 
-        ChatDto chatDto = new ChatDto(
+        ChatDto chatDtoResult = new ChatDto(
                 chat.getId(),
                 chat.getName(),
                 chat.getDescription(),
@@ -114,10 +114,12 @@ public class ChatService {
             this.messagingTemplate.convertAndSendToUser(
                     user.getEmail(),
                     NEW_CHAT_PATH,
-                    chatDto
+                    chatDtoResult
             );
 
         }
+
+        return chatDtoResult;
 
     }
     

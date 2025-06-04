@@ -1,28 +1,22 @@
 package com.serpies.talk2me.controller;
 
 import com.serpies.talk2me.db.dto.ChatDto;
-import com.serpies.talk2me.model.CreateChatRequestDto;
 import com.serpies.talk2me.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 public class ChatController {
 
     @Autowired
     private ChatService chatService;
 
-    @MessageMapping("/chat/create")
-    public void createChat(@Payload CreateChatRequestDto createChatRequestDto, @Header("token") String token) {
-        this.chatService.createChat(createChatRequestDto, token);
+    @PostMapping("/chat/create")
+    @ResponseBody
+    public ChatDto createChat(@RequestHeader("Authorization") String token, @RequestBody ChatDto chatDto) {
+        return this.chatService.createChat(chatDto, token);
     }
 
     @GetMapping("/chats")

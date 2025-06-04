@@ -4,6 +4,7 @@ import com.serpies.talk2me.exceptions.*;
 import com.serpies.talk2me.model.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -37,6 +38,12 @@ public class HttpExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDto> handle(IllegalArgumentException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDto> handle(HttpMessageNotReadableException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST", "The request is not correctly formatted");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
