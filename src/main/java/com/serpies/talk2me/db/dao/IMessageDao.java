@@ -19,9 +19,9 @@ public interface IMessageDao extends CrudRepository<Message, Long> {
             LEFT JOIN file_messages fm ON m.id = fm.message_id
             LEFT JOIN files f ON f.id = fm.file_id
             LEFT JOIN chat_users cu ON cu.id = m.chat_user_id
-            WHERE cu.chat_id = 1
+            WHERE cu.chat_id = :chatId
             ORDER BY m.created_at ASC
-            LIMIT 50""")
+            LIMIT :limit""")
     List<Map<String, Object>> findAllByChatIdWithLimit(@Param("chatId") Long chatId, @Param("limit") Integer limit);
 
 }

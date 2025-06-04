@@ -173,7 +173,7 @@ public class MessageService {
         List<MessageDto> result = new ArrayList<>();
         for (Chat chat : chats){
 
-            List<Map<String, Object>> messages = this.messageDao.findAllByChatIdWithLimit(chat.getId(), this.properties.getMessageLimit()); // cambiar para obtenerlo del properties
+            List<Map<String, Object>> messages = this.messageDao.findAllByChatIdWithLimit(chat.getId(), this.properties.getMessageLimit());
 
             for (Map<String, Object> row : messages) {
 

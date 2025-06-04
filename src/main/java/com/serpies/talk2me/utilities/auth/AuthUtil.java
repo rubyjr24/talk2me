@@ -1,5 +1,6 @@
 package com.serpies.talk2me.utilities.auth;
 
+import com.serpies.talk2me.db.dao.IAuthTokenDao;
 import com.serpies.talk2me.exceptions.NotValidTokenException;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.utilities.Properties;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class AuthUtil {
@@ -21,6 +23,9 @@ public class AuthUtil {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private IAuthTokenDao authTokenDao;
 
     public boolean hasTimeOut(AuthToken authToken){
 
@@ -35,8 +40,15 @@ public class AuthUtil {
     }
 
     public Long validateAndGetUser(String token){
-        Assert.ifCondition(!this.jwtUtil.isTokenValid(token), new NotValidTokenException("The token must be valid"));
-        return this.jwtUtil.getUserId(token);
+
+        NotValidTokenException exception = new NotValidTokenException("The token must be valid");
+
+        Assert.ifCondition(!this.jwtUtil.isTokenValid(token), exception);
+        Long userId = this.jwtUtil.getUserId(token);
+
+        Optional<AuthToken> authTokenOptional = this.authTokenDao.findById(userId);
+        Assert.ifCondition(authTokenOptional.isEmpty(), exception);
+        return userId;
     }
 
     public String getTokenFromAuthorization(String headerValue){

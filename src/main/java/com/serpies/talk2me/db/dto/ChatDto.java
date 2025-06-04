@@ -13,7 +13,7 @@ public class ChatDto {
     private Boolean isPrivate;
     private Set<ChatUserDto> users;
 
-    private Set<Long> userIds;
+    private Set<String> userEmails;
 
 
     public ChatDto() {
@@ -67,11 +67,11 @@ public class ChatDto {
         this.users = users;
     }
 
-    public Set<Long> getUserIds() {
-        return userIds;
+    public Set<String> getUserEmails() {
+        return userEmails;
     }
 
-    public void setUserIds(Set<Long> userIds) {
-        this.userIds = userIds;
+    public void setUserIds(Set<String> userEmails) {
+        this.userEmails = userEmails;
     }
 }

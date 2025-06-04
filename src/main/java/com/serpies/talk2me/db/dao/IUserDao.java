@@ -22,4 +22,7 @@ public interface IUserDao extends CrudRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.id IN :userIds ORDER BY u.id")
     List<User> findUsersByUserIds(@Param("userIds") Set<Long> userIds);
 
+    @Query("SELECT u FROM User u WHERE u.email IN :userEmails ORDER BY u.id")
+    List<User> findUsersByUserEmails(@Param("userEmails") Set<String> userEmails);
+
 }

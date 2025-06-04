@@ -10,6 +10,7 @@ import com.serpies.talk2me.db.entity.Chat;
 import com.serpies.talk2me.db.entity.ChatUser;
 import com.serpies.talk2me.db.entity.User;
 import com.serpies.talk2me.exceptions.NotValidTokenException;
+import com.serpies.talk2me.exceptions.UserNotFoundException;
 import com.serpies.talk2me.utilities.auth.AuthUtil;
 import com.serpies.talk2me.utilities.Assert;
 import com.serpies.talk2me.utilities.auth.JwtUtil;
@@ -18,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ChatService {
@@ -51,19 +49,25 @@ public class ChatService {
 
         Assert.isNull(chatDto, "No data received");
         Assert.isNull(authorizationHeaderValue, "Token not received");
-        Assert.isNull(chatDto.getName(), "Name not received");
-        Assert.isNull(chatDto.getUserIds(), "User list has not been received");
+        Assert.isNull(chatDto.getIsPrivate(), "IsPrivate not received");
+        Assert.isNull(chatDto.getUserEmails(), "User list has not been received");
+        if (!chatDto.getIsPrivate()) Assert.isNull(chatDto.getName(), "Name not received");
 
         String tokenParesed = this.authUtil.getTokenFromAuthorization(authorizationHeaderValue);
         Long userId = this.authUtil.validateAndGetUser(tokenParesed);
-        Set<Long> usersIds = chatDto.getUserIds();
-        usersIds.add(userId);
+        Optional<User> userOptional = this.userDao.findById(userId);
+        Set<String> userEmails = chatDto.getUserEmails();
 
-        Assert.ifCondition(usersIds.size() == 1, "Unable to create a chat for one user");
-        Assert.ifCondition(chatDto.getIsPrivate() && usersIds.size() > 2, "Too many users for private chat");
+        Assert.ifCondition(userOptional.isEmpty(), new UserNotFoundException("User not found"));
+        User userRequest = userOptional.get();
 
-        List<User> users = this.userDao.findUsersByUserIds(usersIds);
-        Assert.ifCondition(users.size() != usersIds.size(), "Not all users exists the app");
+        userEmails.add(userRequest.getEmail());
+
+        Assert.ifCondition(userEmails.size() == 1, "Unable to create a chat for one user");
+        Assert.ifCondition(chatDto.getIsPrivate() && userEmails.size() > 2, "Too many users for private chat");
+
+        List<User> users = this.userDao.findUsersByUserEmails(userEmails);
+        Assert.ifCondition(users.size() != userEmails.size(), new UserNotFoundException("Not all users exists the app"));
 
         Chat chat = new Chat();
         chat.setName(chatDto.getName());
@@ -138,11 +142,11 @@ public class ChatService {
             ChatDto chatDto = new ChatDto();
             chatDto.setId(chat.getId());
             chatDto.setName(chat.getName());
-            chatDto.setDescription(chat.getDescription());
+            chatDto.setDescription(chat.getName());
             chatDto.setIsPrivate(chat.isPrivate());
-            
+
             Set<ChatUserDto> chatUserDtoSet = new HashSet<>();
-            
+
             for (ChatUser chatUser: chat.getChatUserList()){
                 ChatUserDto chatUserDto = getChatUserDto(chatUser);
                 chatUserDtoSet.add(chatUserDto);

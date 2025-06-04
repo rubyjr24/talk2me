@@ -4,6 +4,7 @@ import com.serpies.talk2me.exceptions.*;
 import com.serpies.talk2me.model.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +30,12 @@ public class HttpExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(NotValidTokenException.class)
+    public ResponseEntity<ErrorResponseDto> handle(NotValidTokenException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto("NOT_VALID_TOKEN", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(TimeOutLoginException.class)
     public ResponseEntity<ErrorResponseDto> handle(TimeOutLoginException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("TIME_OUT_LOGIN", ex.getMessage(), ex.getTimeOut());
@@ -43,6 +50,12 @@ public class HttpExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDto> handle(HttpMessageNotReadableException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST", "The request is not correctly formatted");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public ResponseEntity<ErrorResponseDto> handle(HttpMessageConversionException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST", "The request is not correctly formatted");
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
