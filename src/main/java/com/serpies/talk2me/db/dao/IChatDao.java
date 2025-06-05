@@ -23,5 +23,4 @@ public interface IChatDao extends CrudRepository<Chat, Long> {
     @Query("SELECT DISTINCT c FROM Chat c WHERE c.id IN (SELECT c2.id FROM Chat c2 JOIN c2.chatUserList cu2 WHERE cu2.userId = :userId)")
     List<Chat> findByUserIdFechingUsers(@Param("userId") Long userId);
 
-
 }

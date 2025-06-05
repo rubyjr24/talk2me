@@ -48,6 +48,12 @@ public class HttpExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ChatAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handle(ChatAlreadyExistsException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto("CHAT_ALREADY_EXISTS", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDto> handle(HttpMessageNotReadableException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto("MALFORMED_REQUEST", "The request is not correctly formatted");

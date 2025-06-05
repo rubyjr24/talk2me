@@ -9,6 +9,7 @@ import com.serpies.talk2me.db.dto.UserDto;
 import com.serpies.talk2me.db.entity.Chat;
 import com.serpies.talk2me.db.entity.ChatUser;
 import com.serpies.talk2me.db.entity.User;
+import com.serpies.talk2me.exceptions.ChatAlreadyExistsException;
 import com.serpies.talk2me.exceptions.NotValidTokenException;
 import com.serpies.talk2me.exceptions.UserNotFoundException;
 import com.serpies.talk2me.utilities.auth.AuthUtil;
@@ -68,6 +69,34 @@ public class ChatService {
 
         List<User> users = this.userDao.findUsersByUserEmails(userEmails);
         Assert.ifCondition(users.size() != userEmails.size(), new UserNotFoundException("Not all users exists the app"));
+
+        if (chatDto.getIsPrivate()){
+
+            Long otherUserId = null;
+
+            for (User user: users){
+                if (user.getId() != userId){
+                    otherUserId = user.getId();
+                }
+            }
+
+            List<Chat> chatsOfCreatorOfChat = this.chatDao.findByUserIdFechingUsers(userId);
+
+
+            for (Chat chat: chatsOfCreatorOfChat){
+
+
+                if (chat.isPrivate()){
+
+                    for (ChatUser chatUser: chat.getChatUserList()){
+                        if (chatUser.getUser().getId() == otherUserId){
+                            throw new ChatAlreadyExistsException("");
+                        }
+                    }
+                }
+            }
+
+        }
 
         Chat chat = new Chat();
         chat.setName(chatDto.getName());
