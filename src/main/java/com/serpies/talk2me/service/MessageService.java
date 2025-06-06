@@ -97,7 +97,7 @@ public class MessageService {
         message.setChatUserId(chatUser.getId());
         this.messageDao.save(message);
 
-        String fileName = null;
+        URI uri = null;
         if (!isImage){
 
             TextMessage textMessage = new TextMessage();
@@ -112,7 +112,7 @@ public class MessageService {
             Optional<URI> uriOptional = fileUtils.createFile(String.format("%d.%s", now.getTime(), messageDto.getFileExtension()), messageDto.getImage());
 
             Assert.ifCondition(uriOptional.isEmpty(), new InternalServerError("An error occurred while saving the image"));
-            URI uri = uriOptional.get();
+            uri = uriOptional.get();
 
             File file = new File();
             file.setUri(uri.toString());
@@ -123,8 +123,6 @@ public class MessageService {
             fileMessage.setFile(file);
             fileMessage.setMessage(message);
             this.fileMessageDao.save(fileMessage);
-
-            fileName = this.fileUtils.getName(uri);
 
         }
 
@@ -137,8 +135,7 @@ public class MessageService {
         messageDtoResult.setImportance(message.getImportance());
 
         if (isImage){
-            messageDtoResult.setImage(messageDto.getImage());
-            messageDtoResult.setFileName(fileName);
+            messageDtoResult.setUri(uri.toString());
         }else{
             messageDtoResult.setMessage(messageDto.getMessage());
         }
@@ -147,7 +144,7 @@ public class MessageService {
 
             User userToSend = chatUserToSend.getUser();
 
-            //if (userToSend.getId() == userId) continue;
+            if (userToSend.getId() == userId) continue;
 
             this.messagingTemplate.convertAndSendToUser(
                     userToSend.getEmail(),
